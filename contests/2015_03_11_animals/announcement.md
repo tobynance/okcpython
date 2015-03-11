@@ -48,3 +48,4 @@ You can test running it by running:
 ## Submissions Due
 
 Email your solution to contest201503@okcpython.org by midnight of _**April 4th**_.
+The test runner can be found at **`https://github.com/tobynance/okcpython`** under **`contests/2015_03_11_animals`**.
