@@ -1,0 +1,16 @@
+[
+  {
+    "problem": ["2", "goat", "lamb", "sea cucumber"],
+    "solution": [
+      ["goat", "lamb"],
+      ["goat", "sea cucumber"],
+      ["lamb", "sea cucumber"]]
+  },
+  {
+    "problem": ["2", "potato monster", "larry", "lark"],
+    "solution": [
+      ["potato monster", "larry"],
+      ["potato monster", "lark"],
+      ["larry", "lark"]]
+  }
+]

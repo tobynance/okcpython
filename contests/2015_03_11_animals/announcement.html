@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+
+      code.python.hljs.remark-code {
+          background-color: #d6d6d6;
+      }
+        .hljs-vs .hljs-comment
+        {
+            color: #ee0000;
+        }
+
+    </style>
+  </head>
+  <body>
+    <script src="remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create({
+          sourceUrl: 'announcement.md',
+//          highlightStyle: 'magula',
+//          highlightStyle: 'monokai',
+          highlightStyle: 'vs',
+          highlightLanguage: 'python'
+        });
+    </script>
+  </body>
+</html>
