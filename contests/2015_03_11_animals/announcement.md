@@ -18,6 +18,7 @@ print out the list of cards that need to be generated.
 
 # Execution
 
+Your submission **must be a valid Python (2 or 3) program**.
 Assuming your main python file is named `animals.py`, then to execute we would call:
 
     $ python numbers_game.py num_animals "animal1" "animal2" "animal3" ... "animalN"
