@@ -2,7 +2,6 @@ import socket
 import select
 import sys
 from util import flatten_parameters_to_string
-from time_limit import time_limit
 
 """ @author: Aron Nieminen, Mojang AB"""
 
@@ -47,7 +46,6 @@ class Connection:
         return s
 
     ####################################################################
-    @time_limit(2)
     def sendReceive(self, *data):
         """Sends and receive data"""
         self.send(*data)
