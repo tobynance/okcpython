@@ -32,7 +32,7 @@ class Connection:
         """Sends data. Note that a trailing newline '\n' is added here"""
         s = "%s(%s)\n"%(f, flatten_parameters_to_string(data))
         #print "f,data:",f,data
-        #print "s",s
+        # print "s",s
         self.drain()
         self.lastSent = s
         self.socket.sendall(s)
