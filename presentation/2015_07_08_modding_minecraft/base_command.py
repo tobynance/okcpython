@@ -46,19 +46,6 @@ class BaseCommand(object):
                     block_index += 1
 
     ####################################################################
-    def get_surrounding_blocks(self, pos, distance=1):
-        """
-        Get all the positions around `pos` on the XZ plane,
-        including the `pos` block.
-        """
-        return self.get_blocks(Vec3(pos.x-distance,
-                                    pos.y,
-                                    pos.z-distance),
-                               Vec3(pos.x+distance,
-                                    pos.y,
-                                    pos.z+distance))
-
-    ####################################################################
     def set_blocks(self, *args):
         args = self._maybe_convert_arg_from_vec(args)
         self.world.setBlocks(*args)
