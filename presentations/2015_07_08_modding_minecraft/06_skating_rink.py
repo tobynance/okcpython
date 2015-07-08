@@ -1,3 +1,4 @@
+import time
 from base_command import BaseCommand
 from mcpi import block
 from mcpi.vec3 import Vec3
@@ -13,6 +14,9 @@ RANGE = 5
 class Mod(BaseCommand):
     ####################################################################
     def once(self):
+        self.world.postToChat("Sleeping...")
+        time.sleep(4)
+        self.world.postToChat("Freeze!")
         self.replaced = set()
         self.to_replace = set()
         pos = self.player.getTilePos()
@@ -27,6 +31,7 @@ class Mod(BaseCommand):
             if b in REPLACE_BLOCKS:
                 self.to_replace.add(p)
         self.make_rink()
+        self.world.postToChat("All Done.")
 
     ####################################################################
     def make_rink(self):
