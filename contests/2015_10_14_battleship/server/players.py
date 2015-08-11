@@ -18,8 +18,8 @@ class Player(object):
 #######################################################################
 def getPlayers():
     all_players = {}
-    all_players["human"] = Player("Human", ["python", "human.py"], "../client/human_tk")
-    all_players["basic1"] = Player("Basic1", ["python", "simple_client.py"], "../client/python_sample")
+    all_players["human"] = Player("Human", ["python", "human.py"], "../client/human")
+    all_players["basic1"] = Player("Basic1", ["python", "really_simple_client.py"], "../client/python_sample")
     all_players["basic2"] = Player("Basic2", ["python", "simple_client.py"], "../client/python_sample")
 
     return all_players
