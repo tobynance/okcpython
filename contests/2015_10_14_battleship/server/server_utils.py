@@ -1,4 +1,5 @@
 import logging
+import subprocess
 
 USE_TIMEOUT = False  # Not available on Windows, but keeps from waiting on the client forever
 
@@ -79,3 +80,16 @@ class ClientProxy(object):
                 raise ClientErrorException("Client taking too long to respond (%s)" % self.name)
         else:
             return self.client.stdout.readline().strip()
+
+
+#######################################################################
+class Player(object):
+    def __init__(self, name, popen_args, cwd):
+        self.name = name
+        self.popen_args = popen_args
+        self.cwd = cwd
+
+    ###################################################################
+    def getClientProxy(self, other):
+        s = subprocess.Popen(self.popen_args + [self.name, other.name], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=self.cwd)
+        return ClientProxy(self.name, s)

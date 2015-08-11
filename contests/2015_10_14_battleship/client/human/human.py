@@ -2,6 +2,7 @@ import sys
 from Tkinter import *
 import thread
 
+# On Linux, you may need to install python-tk package...
 
 ########################################################################
 class HumanClient(object):
@@ -37,6 +38,7 @@ class HumanClient(object):
     def send_response(self):
         text = self.text_entry.get()
         print text.strip()  # send it to standard out, followed by a newline
+        sys.stdout.flush()
         self.text_entry.delete(0, END)
 
     ####################################################################

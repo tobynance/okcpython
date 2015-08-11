@@ -7,7 +7,7 @@ NUM_ROUNDS = 100
 
 #######################################################################
 def run_two_clients(name1, name2):
-    all_players = players.getPlayers()
+    all_players = players.get_players()
     player1 = all_players[name1]
     player2 = all_players[name2]
 
@@ -19,12 +19,12 @@ def run_two_clients(name1, name2):
 ########################################################################
 def run_all_clients():
     out_file = file("results.txt", "w")
-    all_players = players.getPlayers()
-    if "human" in all_players:
+    all_players = players.get_players()
+    if "human" in all_players:  # Don't include the human client in our multi-round run
         del all_players["human"]
     all_players = all_players.values()
-    wins = {}
-    wins[None] = 0
+    # Start with the number of ties set to 0, then add each player with a zero score
+    wins = {None: 0}
     for player in all_players:
         wins[player.name] = 0
     for i in range(len(all_players)):

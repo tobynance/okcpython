@@ -147,7 +147,7 @@ class BattleshipServer(object):
                     logging.error("ship out-of-bounds from client %s: (%s)", player.name, ship_locations)
                     self.end_game()
                     raise ClientErrorException("ship out-of-bounds from client %s: (%s)" % (player.name, str(ship_locations)))
-                    
+
                 used_locations.add((x, y))
                 if horizontal:
                     x += 1
@@ -163,15 +163,15 @@ class BattleshipServer(object):
         player_shots = self.get_player_info(player, "shots")
         self.observer.send_shots(player.name, player_shots)
         if len(player_shots) > num_shots_allowed:
-            logging.error("bad number of shots from client: Expected %d but got %d (%s)", num_shots_allowed, len(player_shots), player_shots)
+            logging.error("bad number of shots from client %s: Expected %d but got %d (%s)", player.name, num_shots_allowed, len(player_shots), player_shots)
             self.end_game()
-            raise ClientErrorException("bad number of shots from client: (%s)" % str(player_shots))
+            raise ClientErrorException("bad number of shots from client %s: (%s)" % (player.name, str(player_shots)))
         try:
             player_shots = [(int(x), int(y)) for (x, y) in player_shots]
         except:
-            logging.error("bad line from client: (%s)", player_shots)
+            logging.error("bad line from client %s: (%s)", player.name, player_shots)
             self.end_game()
-            raise ClientErrorException("bad line from client: (%s)" % str(player_shots))
+            raise ClientErrorException("bad line from client %s: (%s)" % (player.name, str(player_shots)))
         return player_shots
 
     ####################################################################
