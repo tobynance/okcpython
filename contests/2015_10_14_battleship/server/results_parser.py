@@ -30,7 +30,7 @@ def main():
         
         ### Basically, the first method highlights the differences between
         ### players more but disguises how many runs there were, while the
-        ### second obscures the scores a little bit but perserves more
+        ### second obscures the scores a little bit but preserves more
         ### information.
         if TOTAL_ZERO:
             grid[player1][player2] += result

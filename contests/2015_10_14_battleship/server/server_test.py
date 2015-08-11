@@ -1,20 +1,7 @@
 import unittest
-from server import BattleshipServer, ClientProxy, ClientErrorException
+from server import BattleshipServer
+from server_utils import ClientProxy, ClientErrorException, NullStream
 
-
-########################################################################
-class NullStream(object):
-    ####################################################################
-    def readline(self):
-        pass
-
-    ####################################################################
-    def write(self, *args):
-        pass
-
-    ####################################################################
-    def flush(self, *args):
-        pass
 
 ########################################################################
 class MockClient(object):
@@ -105,11 +92,13 @@ class ServerTests(unittest.TestCase):
             pass
 
     ####################################################################
-    def test_client_submitted_too_few_shots(self):
+    def test_client_submitted_fewer_shots(self):
         self.server.get_num_surviving_ships = lambda x: 2
         self.server.get_player_info = lambda x, y: [["0", "0"]]
-        try:
-            self.server.get_player_shots(self.player1)
-            self.fail("Too few shots should result in error")
-        except ClientErrorException, e:
-            pass
+        result = self.server.get_player_shots(self.player1)
+        self.assertEqual(result, [(0, 0)])  # correctly parsed the result
+
+
+########################################################################
+if __name__ == "__main__":
+    unittest.main()
