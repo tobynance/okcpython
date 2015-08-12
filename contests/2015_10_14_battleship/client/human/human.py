@@ -18,7 +18,7 @@ class HumanClient(object):
         top_frame.pack(side=TOP, expand=True, fill=BOTH)
 
         self.scrollbar = Scrollbar(top_frame)
-        self.list_box = Listbox(top_frame, height=24, width=100)
+        self.list_box = Listbox(top_frame, height=10, width=80)
         self.scrollbar.pack(side=RIGHT, fill=Y)
         self.list_box.pack(side=LEFT, expand=True, fill=BOTH)
         self.scrollbar.config(command=self.list_box.yview)
