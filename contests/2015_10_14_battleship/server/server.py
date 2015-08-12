@@ -101,10 +101,7 @@ class BattleshipServer(object):
 
         if not (line.startswith("|RESPONSE|" + tag + "|") and line.endswith("|END|")):
             logging.error("bad line from client: (%s)", line)
-            try:
-                self.end_game()
-            except:
-                pass
+            self.end_game()
             raise ClientErrorException("bad line from client: (%s)" % line)
         return self.parse_line_into_value_sets(line)
 
@@ -190,19 +187,16 @@ class BattleshipServer(object):
                 shooting_player.send("|INFO|you miss|%d %d|END|" % location)
 
     ####################################################################
-    def check_player_alive(self, player):
-        for ship in player.ships:
-            if any(ship.values()):
-                return True
-        return False
-
-    ####################################################################
     def get_num_surviving_ships(self, player):
         count = 0
         for ship in player.ships:
             if any(ship.values()):
                 count += 1
         return count
+
+    ####################################################################
+    def check_player_alive(self, player):
+        return self.get_num_surviving_ships(player) > 0
 
     ####################################################################
     def send_all_clients(self, line):
