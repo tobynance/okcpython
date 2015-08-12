@@ -1,6 +1,5 @@
 from Tkinter import *
 import thread
-import sys
 
 # On Linux, you may need to install python-tk package...
 
