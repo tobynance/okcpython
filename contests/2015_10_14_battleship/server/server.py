@@ -22,77 +22,69 @@ class BattleshipServer(object):
 
     ####################################################################
     def run(self):
-        self.send_all_clients("|INFO|grid size|%d %d|END|" % (self.width, self.height))
-        self.observer.send("|grid size|%d %d|END|" % (self.width, self.height))
-        self.send_all_clients("|INFO|num ships|%d|END|" % len(self.ship_sizes))
-        self.observer.send("|num ships|%d|END|" % len(self.ship_sizes))
-        str_ship_sizes = "|".join([str(x) for x in self.ship_sizes])
-        self.send_all_clients("|INFO|ship sizes|%s|END|" % str_ship_sizes)
-        self.observer.send("|ship sizes|%s|END|" % str_ship_sizes)
-
-        ### get ship placement
+        game_over = False
         try:
+            ### get ship placement
+            self.send_all_clients("|INFO|grid size|%d %d|END|" % (self.width, self.height))
+            self.observer.send("|grid size|%d %d|END|" % (self.width, self.height))
+            self.send_all_clients("|INFO|num ships|%d|END|" % len(self.ship_sizes))
+            self.observer.send("|num ships|%d|END|" % len(self.ship_sizes))
+            str_ship_sizes = "|".join([str(x) for x in self.ship_sizes])
+            self.send_all_clients("|INFO|ship sizes|%s|END|" % str_ship_sizes)
+            self.observer.send("|ship sizes|%s|END|" % str_ship_sizes)
+
             self.get_ships(self.player1)
-        except ClientErrorException, e:
-            self.end_game()
-            return self.player2.name
-        try:
             self.get_ships(self.player2)
+
+            ### start game loop
+            while not game_over:
+                game_over = self.play_round()
         except ClientErrorException, e:
-            self.end_game()
+            if e.winner:
+                game_over = e.winner
+            elif e.loser:
+                game_over = self.other_player_name(e.loser)
+            self.report_winner(game_over == self.player1.name, game_over == self.player2.name)
+        self.end_game()
+        return game_over
+
+    ####################################################################
+    def play_round(self):
+        player_1_shots = self.get_player_shots(self.player1)
+        player_2_shots = self.get_player_shots(self.player2)
+
+        ### make shots
+        self.play_shots(self.player1, self.player2, player_1_shots)
+        self.play_shots(self.player2, self.player1, player_2_shots)
+
+        ### check player status
+        player_1_alive = self.check_player_alive(self.player1)
+        player_2_alive = self.check_player_alive(self.player2)
+
+        if player_1_alive and player_2_alive:
+            return False
+        else:
+            return self.report_winner(player_1_alive, player_2_alive)
+
+    ####################################################################
+    def report_winner(self, player_1_alive, player_2_alive):
+        if player_1_alive and not player_2_alive:
+            self.player1.send("|INFO|won game|END|")
+            self.player2.send("|INFO|lost game|END|")
+            self.observer.send("|end game|%s won|END|" % self.player1.name)
+            logging.info("%s won the game" % self.player1.name)
             return self.player1.name
-
-        ### start game loop
-        while True:
-            try:
-                player_1_shots = self.get_player_shots(self.player1)
-            except ClientErrorException, e:
-                self.end_game()
-                return self.player2.name
-            try:
-                player_2_shots = self.get_player_shots(self.player2)
-            except ClientErrorException, e:
-                self.end_game()
-                return self.player1.name
-
-            ### make shots
-            try:
-                self.play_shots(self.player1, self.player2, player_1_shots)
-            except ClientErrorException, e:
-                self.end_game()
-                return self.player2.name
-            try:
-                self.play_shots(self.player2, self.player1, player_2_shots)
-            except ClientErrorException, e:
-                self.end_game()
-                return self.player1.name
-
-            ### check player status
-            player_1_alive = self.check_player_alive(self.player1)
-            player_2_alive = self.check_player_alive(self.player2)
-
-            if player_1_alive and player_2_alive:
-                continue
-            elif player_1_alive and not player_2_alive:
-                self.player1.send("|INFO|won game|END|")
-                self.player2.send("|INFO|lost game|END|")
-                self.observer.send("|end game|%s won|END|" % self.player1.name)
-                logging.info("%s won the game" % self.player1.name)
-                self.end_game()
-                return self.player1.name
-            elif player_2_alive and not player_1_alive:
-                self.player2.send("|INFO|won game|END|")
-                self.player1.send("|INFO|lost game|END|")
-                logging.info("%s won the game" % self.player2.name)
-                self.observer.send("|end game|%s won|END|" % self.player2.name)
-                self.end_game()
-                return self.player2.name
-            elif player_1_alive == False and player_2_alive == False:
-                self.send_all_clients("|INFO|tie game|END|")
-                logging.info("The game was tied")
-                self.observer.send("|end game|tie game|END|")
-                self.end_game()
-                return
+        elif player_2_alive and not player_1_alive:
+            self.player2.send("|INFO|won game|END|")
+            self.player1.send("|INFO|lost game|END|")
+            logging.info("%s won the game" % self.player2.name)
+            self.observer.send("|end game|%s won|END|" % self.player2.name)
+            return self.player2.name
+        elif player_1_alive is False and player_2_alive is False:
+            self.send_all_clients("|INFO|tie game|END|")
+            logging.info("The game was tied")
+            self.observer.send("|end game|tie game|END|")
+            return True
 
     ####################################################################
     def get_player_info(self, player, tag):
@@ -101,8 +93,7 @@ class BattleshipServer(object):
 
         if not (line.startswith("|RESPONSE|" + tag + "|") and line.endswith("|END|")):
             logging.error("bad line from client: (%s)", line)
-            self.end_game()
-            raise ClientErrorException("bad line from client: (%s)" % line)
+            raise ClientErrorException(loser=player.name, message="bad line from client: (%s)" % line)
         return self.parse_line_into_value_sets(line)
 
     ####################################################################
@@ -119,8 +110,7 @@ class BattleshipServer(object):
         ship_locations = self.get_player_info(player, "ship locations")
         if len(ship_locations) != len(self.ship_sizes):
             logging.error("incorrect number of ships from client %s: Expected %d but got %d (%s)", player.name, len(self.ship_sizes), len(ship_locations), ship_locations)
-            self.end_game()
-            raise ClientErrorException("incorrect number of ships from client %s: (%s)" % (player.name, str(ship_locations)))
+            raise ClientErrorException(loser=player.name, message="incorrect number of ships from client %s: (%s)" % (player.name, str(ship_locations)))
 
         self.observer.send_ship_locations(player.name, ship_locations)
         ships = []
@@ -138,12 +128,10 @@ class BattleshipServer(object):
                 if (x, y) in used_locations:
                     ### already used spot
                     logging.error("overlapping ships from client %s: (%s)", player.name, ship_locations)
-                    self.end_game()
-                    raise ClientErrorException("overlapping ships from client %s: (%s)" % (player.name, str(ship_locations)))
+                    raise ClientErrorException(loser=player.name, message="overlapping ships from client %s: (%s)" % (player.name, str(ship_locations)))
                 if not (0 <= x < self.width) or not (0 <= y < self.height):
                     logging.error("ship out-of-bounds from client %s: (%s)", player.name, ship_locations)
-                    self.end_game()
-                    raise ClientErrorException("ship out-of-bounds from client %s: (%s)" % (player.name, str(ship_locations)))
+                    raise ClientErrorException(loser=player.name, message="ship out-of-bounds from client %s: (%s)" % (player.name, str(ship_locations)))
 
                 used_locations.add((x, y))
                 if horizontal:
@@ -161,15 +149,21 @@ class BattleshipServer(object):
         self.observer.send_shots(player.name, player_shots)
         if len(player_shots) > num_shots_allowed:
             logging.error("bad number of shots from client %s: Expected %d but got %d (%s)", player.name, num_shots_allowed, len(player_shots), player_shots)
-            self.end_game()
-            raise ClientErrorException("bad number of shots from client %s: (%s)" % (player.name, str(player_shots)))
+            raise ClientErrorException(loser=player.name, message="bad number of shots from client %s: (%s)" % (player.name, str(player_shots)))
         try:
             player_shots = [(int(x), int(y)) for (x, y) in player_shots]
         except:
             logging.error("bad line from client %s: (%s)", player.name, player_shots)
-            self.end_game()
-            raise ClientErrorException("bad line from client %s: (%s)" % (player.name, str(player_shots)))
+            raise ClientErrorException(loser=player.name, message="bad line from client %s: (%s)" % (player.name, str(player_shots)))
         return player_shots
+
+    ####################################################################
+    def other_player_name(self, player_name):
+        """Simple way to get the name of the opponent given a player"""
+        if player_name == self.player1.name:
+            return self.player2.name
+        else:
+            return self.player1.name
 
     ####################################################################
     def play_shots(self, shooting_player, shot_at_player, shots):

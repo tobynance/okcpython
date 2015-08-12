@@ -5,7 +5,17 @@ USE_TIMEOUT = False  # Not available on Windows, but keeps from waiting on the c
 
 
 ########################################################################
-class ClientErrorException(Exception): pass
+class ClientErrorException(Exception):
+    ####################################################################
+    def __init__(self, winner=None, loser=None, message=None):
+        super(Exception, self).__init__()
+        self.winner = winner
+        self.loser = loser
+        self.message = message
+
+    ####################################################################
+    def __str__(self):
+        return self.message
 
 
 ########################################################################
@@ -66,7 +76,7 @@ class ClientProxy(object):
             self.client.stdin.flush()
         except Exception, e:
             logging.error("error with sending to client (%s): %s" % (self.name, str(e)))
-            raise ClientErrorException("Exception sending to (%s)" % self.name)
+            raise ClientErrorException(loser=self.name, message="Exception sending to (%s)" % self.name)
 
     ####################################################################
     def receive(self):
@@ -77,7 +87,7 @@ class ClientProxy(object):
                 return stdout_read().strip()
             except timeout.TimeoutFunctionException:
                 logging.error("Client taking too long to respond (%s)" % self.name)
-                raise ClientErrorException("Client taking too long to respond (%s)" % self.name)
+                raise ClientErrorException(loser=self.name, message="Client taking too long to respond (%s)" % self.name)
         else:
             return self.client.stdout.readline().strip()
 
