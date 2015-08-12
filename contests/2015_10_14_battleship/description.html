@@ -23,11 +23,11 @@
 
 <p>
     This is the standard battleship game, where each client places their ships on a
-    grid, and then fires at the opponent. You fire as many shots as you have ships.
+    grid, and then fires at the opponent. You fire as many shots as you have surviving ships.
 </p>
 
 <p>
-    You start the game with 5 ships, on a 10 x 10 grid.
+    You start the game with 5 ships, on a <code>10 x 10</code> grid.
 </p>
 
 <p>
@@ -38,7 +38,15 @@
 
 <p>
     This is due to the server being written to allow different size boards and ships,
-    but for this contest we will only be using a 10 x 10 with the ships listed above.
+    but for this contest we will only be using a 10 x 10 with the ships listed below.
+</p>
+
+<p>
+    The server supports ships that range in length from 1 to 10, but for the purposes of this contest,
+    we will use the sizes used in the physical game.
+
+    There is one ship that is 2 squares long,
+    two ships 3 squares long, one ship 4 squares long, and one ship 5 squares long (2, 3, 3, 4, 5).
 </p>
 
 <p>
@@ -180,14 +188,6 @@
 </table>
 
 <p>
-    The server supports ships that range in length from 1 to 10, but for the purposes of this contest,
-    we will use the sizes used in the physical game.
-
-    There is one ship that is 2 squares long,
-    two ships 3 squares long, one ship 4 squares long, and one ship 5 squares long (2, 3, 3, 4, 5).
-</p>
-
-<p>
     Both players will have the same number of ships and the same size of ships.
 </p>
 
@@ -215,7 +215,7 @@
 <h3>Example Run</h3>
 
 <p>
-    Here is an example of all messages being sent back and forth for a short game.
+    Here is an example of all messages being sent back and forth for a short game on a smaller board with only 2 ships.
 </p>
 
 <pre>
@@ -228,57 +228,57 @@
 
   <span class="message-sender">Server:</span>  |QUERY|ship locations|END|                     <span class="code-comment"># sent to player 2</span>
   <span class="message-sender">Player2:</span> |RESPONSE|ship locations|0 2 H|0 3 H|END|      <span class="code-comment"># sent from player 2 to the server</span>
-  
-  <span class="code-comment">##### Round 1</span>
+
+  <span class="code-comment">######## Round 1</span>
   <span class="message-sender">Server:</span>  |QUERY|shots|2|END|                            <span class="code-comment"># sent to player 1</span>
   <span class="message-sender">Player1:</span> |RESPONSE|shots|0 0|0 3|END|                   <span class="code-comment"># sent from player 1 to the server</span>
-  
+
   <span class="message-sender">Server:</span>  |QUERY|shots|2|END|                            <span class="code-comment"># sent to player 2</span>
   <span class="message-sender">Player2:</span> |RESPONSE|shots|0 0|0 1|END|                   <span class="code-comment"># sent from player 2 to the server</span>
-  
+
   <span class="message-sender">Server:</span>  |INFO|you miss|0 0|END|                        <span class="code-comment"># sent to player 1</span>
   <span class="message-sender">Server:</span>  |INFO|you hit|0 3|END|                         <span class="code-comment"># sent to player 1</span>
   <span class="message-sender">Server:</span>  |INFO|opponent hit|0 0|END|                    <span class="code-comment"># sent to player 1</span>
   <span class="message-sender">Server:</span>  |INFO|opponent miss|0 1|END|                   <span class="code-comment"># sent to player 1</span>
-  
+
   <span class="message-sender">Server:</span>  |INFO|you hit|0 0|END|                         <span class="code-comment"># sent to player 2</span>
   <span class="message-sender">Server:</span>  |INFO|you miss|0 1|END|                        <span class="code-comment"># sent to player 2</span>
   <span class="message-sender">Server:</span>  |INFO|opponent miss|0 0|END|                   <span class="code-comment"># sent to player 2</span>
   <span class="message-sender">Server:</span>  |INFO|opponent hit|0 3|END|                    <span class="code-comment"># sent to player 2</span>
-  
-  <span class="code-comment">##### Round 2 ### player1's smaller ship has been destroyed</span>
+
+  <span class="code-comment">######## Round 2 - player1's smaller ship has been destroyed</span>
   <span class="message-sender">Server:</span>  |QUERY|shots|1|END|                            <span class="code-comment"># sent to player 1</span>
   <span class="message-sender">Player1:</span> |RESPONSE|shots|1 3|END|                       <span class="code-comment"># sent from player 1 to the server</span>
-  
+
   <span class="message-sender">Server:</span>  |QUERY|shots|2|END|                            <span class="code-comment"># sent to player 2</span>
   <span class="message-sender">Player2:</span> |RESPONSE|shots|1 0|1 1|END|                   <span class="code-comment"># sent from player 2 to the server</span>
-  
+
   <span class="message-sender">Server:</span>  |INFO|you hit|1 3|END|                         <span class="code-comment"># sent to player 1</span>
   <span class="message-sender">Server:</span>  |INFO|opponent hit|0 0|END|                    <span class="code-comment"># sent to player 1</span>
   <span class="message-sender">Server:</span>  |INFO|opponent miss|0 1|END|                   <span class="code-comment"># sent to player 1</span>
-  
+
   <span class="message-sender">Server:</span>  |INFO|you hit|1 0|END|                         <span class="code-comment"># sent to player 2</span>
   <span class="message-sender">Server:</span>  |INFO|you miss|1 1|END|                        <span class="code-comment"># sent to player 2</span>
   <span class="message-sender">Server:</span>  |INFO|opponent hit|1 3|END|                    <span class="code-comment"># sent to player 2</span>
-  
-  <span class="code-comment">##### Round 3 ### player2's larger ship has been destroyed</span>
+
+  <span class="code-comment">######## Round 3 - player2's larger ship has been destroyed</span>
   <span class="message-sender">Server:</span>  |QUERY|shots|1|END|                            <span class="code-comment"># sent to player 1</span>
   <span class="message-sender">Player1:</span> |RESPONSE|shots|2 2|END|                       <span class="code-comment"># sent from player 1 to the server</span>
-  
+
   <span class="message-sender">Server:</span>  |QUERY|shots|1|END|                            <span class="code-comment"># sent to player 2</span>
   <span class="message-sender">Player2:</span> |RESPONSE|shots|2 1|END|                       <span class="code-comment"># sent from player 2 to the server</span>
-  
+
   <span class="message-sender">Server:</span>  |INFO|you miss|2 2|END|                        <span class="code-comment"># sent to player 1</span>
   <span class="message-sender">Server:</span>  |INFO|opponent hit|2 1|END|                    <span class="code-comment"># sent to player 1</span>
-  
+
   <span class="message-sender">Server:</span>  |INFO|you hit|2 1|END|                         <span class="code-comment"># sent to player 2</span>
   <span class="message-sender">Server:</span>  |INFO|opponent miss|2 2|END|                   <span class="code-comment"># sent to player 2</span>
-  
+
   <span class="code-comment">##### Game Over</span>
   <span class="message-sender">Server:</span>  |INFO|lost game|END|                           <span class="code-comment"># sent to player 1</span>
   <span class="message-sender">Server:</span>  |INFO|won game|END|                            <span class="code-comment"># sent to player 2</span>
   <span class="message-sender">Server:</span>  |INFO|end game|END|                            <span class="code-comment"># sent to all clients</span>
-  
+
 </pre>
 
 

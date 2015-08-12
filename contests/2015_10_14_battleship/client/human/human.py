@@ -1,8 +1,9 @@
-import sys
 from Tkinter import *
 import thread
+import sys
 
 # On Linux, you may need to install python-tk package...
+
 
 ########################################################################
 class HumanClient(object):
@@ -10,6 +11,8 @@ class HumanClient(object):
     def __init__(self):
         self.root = Tk()
         self.root.title("Battleship")
+        self.grid_image = PhotoImage(file="grid.gif")
+        Label(self.root, image=self.grid_image).pack(side=TOP, expand=True, fill=BOTH)
 
         top_frame = Frame(self.root)
         top_frame.pack(side=TOP, expand=True, fill=BOTH)
@@ -31,10 +34,6 @@ class HumanClient(object):
         self.text_entry.bind("<KP_Enter>", lambda event: self.send_response())
 
     ####################################################################
-    def run(self):
-        mainloop()
-
-    ####################################################################
     def send_response(self):
         text = self.text_entry.get()
         print text.strip()  # send it to standard out, followed by a newline
@@ -52,14 +51,14 @@ class HumanClient(object):
 ########################################################################
 def run_listener(client):
     while True:
-        line = sys.stdin.readline()
-        line = line.strip()
-        if line:
-            client.add_line(line)
+        line = sys.stdin.readline().strip()
+        client.add_line(line)
+        if line == "|INFO|end game|END|":
+            return
 
 
 ########################################################################
 if __name__ == "__main__":
-    self = HumanClient()
-    thread.start_new_thread(run_listener, (self,))
-    self.run()
+    client = HumanClient()
+    thread.start_new_thread(run_listener, (client,))
+    mainloop()
