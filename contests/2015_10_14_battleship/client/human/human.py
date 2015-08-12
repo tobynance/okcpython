@@ -37,7 +37,6 @@ class HumanClient(object):
     def send_response(self):
         text = self.text_entry.get()
         print text.strip()  # send it to standard out, followed by a newline
-        sys.stdout.flush()
         self.text_entry.delete(0, END)
 
     ####################################################################
@@ -51,7 +50,7 @@ class HumanClient(object):
 ########################################################################
 def run_listener(client):
     while True:
-        line = sys.stdin.readline().strip()
+        line = raw_input()
         client.add_line(line)
         if line == "|INFO|end game|END|":
             return

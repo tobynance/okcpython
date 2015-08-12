@@ -15,8 +15,7 @@ class ClientBase(object):
     ###################################################################
     def run(self):
         while True:
-            line = sys.stdin.readline()
-            line = line.strip()
+            line = raw_input()
             assert(line.endswith("|END|"))
             if line == "|INFO|end game|END|":
                 return
@@ -52,4 +51,3 @@ class ClientBase(object):
     def send(self, tag, data):
         line = "|RESPONSE|%s|%s|END|\n" % (tag, data)
         sys.stdout.write(line)
-        sys.stdout.flush()
