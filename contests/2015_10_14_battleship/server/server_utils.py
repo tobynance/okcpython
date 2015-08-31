@@ -103,3 +103,9 @@ class Player(object):
     def getClientProxy(self, other):
         s = subprocess.Popen(self.popen_args + [self.name, other.name], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=self.cwd)
         return ClientProxy(self.name, s)
+
+#######################################################################
+class NoisyPlayer(Player):
+    def getClientProxy(self, other):
+        s = subprocess.Popen(self.popen_args + [self.name, other.name], stdin=subprocess.PIPE, stdout=subprocess.PIPE, cwd=self.cwd)
+        return ClientProxy(self.name, s)
