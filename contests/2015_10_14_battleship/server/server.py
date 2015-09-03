@@ -45,6 +45,8 @@ class BattleshipServer(object):
             elif e.loser:
                 game_over = self.other_player_name(e.loser)
             self.report_winner(game_over == self.player1.name, game_over == self.player2.name)
+        if game_over == True:
+            game_over = None
         self.end_game()
         return game_over
 
