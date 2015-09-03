@@ -47,10 +47,12 @@ def run_all_clients():
                 out_file.flush()
                 s.player1.client.stdin.close()
                 s.player1.client.stdout.close()
-                s.player1.client.stderr.close()
+                if s.player1.client.stderr:
+                    s.player1.client.stderr.close()
                 s.player2.client.stdin.close()
                 s.player2.client.stdout.close()
-                s.player2.client.stderr.close()
+                if s.player2.client.stderr:
+                    s.player2.client.stderr.close()
                 s.player1.client.kill()
                 s.player2.client.kill()
 
